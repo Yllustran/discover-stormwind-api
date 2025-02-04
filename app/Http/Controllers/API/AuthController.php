@@ -4,85 +4,47 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
+    protected $authService;
 
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
 
-    // Register a new user
+    // Request for Register a new user
     public function register(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|max:255',
         ]);
 
-        $user = User::create([
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $response = $this->authService->register($data);
 
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User registered successfully!',
-            'user' => $user,
-            'access_token' => [
-                'token' => $token,
-                'type' => 'Bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60, // Minutes
-            ],
-        ], 201);
+        return response()->json($response, $response['status_code']);
     }
 
-
-    // Login user and return token
+    // Request for login
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $data = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if (!$token = Auth::attempt($credentials)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid credentials',
-            ], 401);
-        }
+        $response = $this->authService->login($data);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User logged in successfully',
-            'user' => Auth::user(),
-            'access_token' => [
-                'token' => $token,
-                'type' => 'Bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60, // Minutes
-            ],
-        ]);
+        return response()->json($response, $response['status_code']);
     }
 
-
-    // Logout user (Invalidate the token)
+    // Request for logout
     public function logout()
     {
-        try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Successfully logged out',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to logout, please try again',
-            ], 500);
-        }
+        $response = $this->authService->logout();
+        return response()->json($response, $response['status_code']);
     }
 }
