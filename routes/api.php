@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\PlaceController;
+use App\Http\Controllers\API\ArticleController;
 
 
 
@@ -22,6 +23,12 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Places  // 
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{id}', [PlaceController::class, 'show']);
+
+// Articles  // 
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
+
+
 
 
 // Only accessible via JWT //
@@ -43,4 +50,10 @@ Route::middleware('auth:api')->group(function() {
     Route::post('/places', [PlaceController::class, 'store']);
     Route::put('/places/{id}', [PlaceController::class, 'update']);
     Route::delete('/places/{id}', [PlaceController::class, 'destroy']);
+
+    // Articles  // 
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::put('/articles/{id}', [ArticleController::class, 'update']);
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+
 });

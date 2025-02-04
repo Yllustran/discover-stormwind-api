@@ -13,6 +13,7 @@ class Article extends Model
         'title',
         'content',
         'image',
+        'place_id',
     ];
 
     // One Article belongs to One Place
