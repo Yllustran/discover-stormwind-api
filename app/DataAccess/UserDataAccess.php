@@ -3,6 +3,7 @@
 namespace App\DataAccess;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserDataAccess
 {
@@ -13,4 +14,10 @@ class UserDataAccess
             'password' => $hashedPassword,
         ]);
     }
+
+    public function getAuthenticatedUser()
+    {
+        return Auth::user();
+    }
 }
+

@@ -3,28 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
+    protected $userService;
 
-    // Get the currently authenticated user
-    public function currentUser()
+    public function __construct(UserService $userService)
     {
-        $user = Auth::user();
+        $this->userService = $userService;
+    }
 
-        if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
-        }
+    public function currentUser(): JsonResponse
+    {
+        $response = $this->userService->getCurrentUser();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User fetched successfully!',
-            'user' => $user,
-        ]);
+        return response()->json($response, $response['status_code']);
     }
 }
