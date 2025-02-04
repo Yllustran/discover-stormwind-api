@@ -39,4 +39,10 @@ class PlaceService
     {
         return $this->placeDataAccess->delete($id);
     }
+
+    public function getByCategory(int $category_id): array
+    {
+        return $this->placeDataAccess->getByCategory($category_id);
+    }
+    
 }

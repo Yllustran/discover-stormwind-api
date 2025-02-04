@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Services\PlaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Place;
 
 class PlaceController extends Controller
 {
@@ -68,4 +67,14 @@ class PlaceController extends Controller
             ? response()->json(['message' => 'Place deleted'], 200)
             : response()->json(['message' => 'Place not found'], 404);
     }
+
+    public function getByCategory(int $category_id): JsonResponse
+    {
+        $places = $this->placeService->getByCategory($category_id);
+    
+        return count($places) > 0
+            ? response()->json($places, 200)
+            : response()->json(['message' => 'No places found for this category'], 404);
+    }
+    
 }

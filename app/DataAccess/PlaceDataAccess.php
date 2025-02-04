@@ -36,4 +36,10 @@ class PlaceDataAccess
         $place = Place::find($id);
         return $place ? $place->delete() : false;
     }
+
+    public function getByCategory(int $category_id): array
+    {
+        return Place::where('category_id', $category_id)->get()->toArray();
+    }
+    
 }

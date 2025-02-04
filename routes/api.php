@@ -23,6 +23,7 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Places  // 
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{id}', [PlaceController::class, 'show']);
+Route::get('/places/category/{category_id}', [PlaceController::class, 'getByCategory']);
 
 // Articles  // 
 Route::get('/articles', [ArticleController::class, 'index']);
