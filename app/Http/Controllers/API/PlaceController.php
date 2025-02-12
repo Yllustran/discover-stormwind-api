@@ -34,27 +34,40 @@ class PlaceController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|string',
-            'latitude'    => 'required|numeric',
-            'longitude'   => 'required|numeric',
+            'image'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'latitude'    => 'required|numeric|max:5000',
+            'longitude'   => 'required|numeric|max:5000',
             'category_id' => 'required|exists:categories,id'
         ]);
-
+    
+        // image upload 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('places', 'public');
+            $validated['image'] = $imagePath;
+        }
+    
         $place = $this->placeService->create($validated);
         return response()->json($place, 201);
     }
+    
 
     public function update(Request $request, int $id): JsonResponse
     {
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|string',
-            'latitude'    => 'required|numeric',
-            'longitude'   => 'required|numeric',
+            'image'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'latitude'    => 'required|numeric|max:5000',
+            'longitude'   => 'required|numeric|max:5000',
             'category_id' => 'required|exists:categories,id'
         ]);
-
+    
+        // image upload 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('places', 'public');
+            $validated['image'] = $imagePath;
+        }
+    
         $place = $this->placeService->update($id, $validated);
         return $place
             ? response()->json($place, 200)

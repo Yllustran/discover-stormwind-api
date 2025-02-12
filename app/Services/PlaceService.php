@@ -27,12 +27,17 @@ class PlaceService
 
     public function create(array $data): Place
     {
-        return $this->placeDataAccess->create($data);
+        return Place::create($data);
     }
+    
 
     public function update(int $id, array $data): ?Place
     {
-        return $this->placeDataAccess->update($id, $data);
+        $place = Place::find($id);
+        if ($place) {
+            $place->update($data);
+        }
+        return $place;
     }
 
     public function delete(int $id): bool
