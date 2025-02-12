@@ -56,24 +56,30 @@ class PlaceController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'image'       => 'nullable|mimes:jpg,png,jpeg|max:2048', //  Ne force pas "file"
             'latitude'    => 'required|numeric|max:5000',
             'longitude'   => 'required|numeric|max:5000',
             'category_id' => 'required|exists:categories,id'
         ]);
     
-        // image upload 
+        $place = $this->placeService->getById($id);
+        if (!$place) {
+            return response()->json(['message' => 'Place not found'], 404);
+        }
+    
+        // Vérifier si une nouvelle image est envoyée
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('places', 'public');
             $validated['image'] = $imagePath;
+        } else {
+            $validated['image'] = $place->image; //  Conserve l'ancienne image si aucune nouvelle n'est envoyée
         }
     
-        $place = $this->placeService->update($id, $validated);
-        return $place
-            ? response()->json($place, 200)
-            : response()->json(['message' => 'Place not found'], 404);
+        $updatedPlace = $this->placeService->update($id, $validated);
+        return response()->json($updatedPlace, 200);
     }
 
+    
     public function destroy(int $id): JsonResponse
     {
         return $this->placeService->delete($id)
